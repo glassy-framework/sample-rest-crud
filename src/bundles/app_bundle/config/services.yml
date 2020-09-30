@@ -11,7 +11,7 @@ services:
   http_error_handler:
    class: App::ErrorHandler
 
-  # montrollers
+  # controllers
   home_controller:
     class: App::HomeController
     tag:
@@ -33,7 +33,18 @@ services:
     tag:
       - controller
 
-  # mervices
+  product_category_controller:
+    class: App::ProductCategoryController
+    kwargs:
+      serializer: '@product_category_serializer.as(App::Serializer(App::ProductCategory))'
+      service: '@product_category_service'
+      repository: '@product_category_repository.as(App::CrudRepository(App::ProductCategory))'
+      policy: '@product_category_policy.as(App::CrudPolicy(App::ProductCategory))'
+      user_repository: '@user_repository'
+    tag:
+      - controller
+
+  # services
   user_service:
     class: App::UserService
     kwargs:
@@ -50,15 +61,37 @@ services:
   crypt_service:
     class: App::CryptService
 
-  # mepositories
+  product_category_service:
+    class: App::ProductCategoryService
+    kwargs:
+      repository: '@product_category_repository.as(App::CrudRepository(App::ProductCategory))'
+      validator: '@product_category_validator'
+
+  # repositories
   user_repository:
     class: App::UserRepository
     kwargs:
       connection: '@db_connection'
 
-  # merializers
+  product_category_repository:
+    class: App::ProductCategoryRepository
+    kwargs:
+      connection: '@db_connection'
+
+  # serializers
   user_serializer:
     class: App::UserSerializer
+
+  product_category_serializer:
+    class: App::ProductCategorySerializer
+
+  # validators
+  product_category_validator:
+    class: App::ProductCategoryValidator
+
+  # policies
+  product_category_policy:
+    class: App::ProductCategoryPolicy
 
   # middlewares
   content_type_middleware:

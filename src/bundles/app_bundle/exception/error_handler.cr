@@ -1,6 +1,6 @@
 require "glassy-http"
-require "../exception/validation_exception"
 require "jsonapi-serializer-cr"
+require "./validation_exception"
 
 module App
   class ErrorHandler < Glassy::HTTP::ErrorHandler

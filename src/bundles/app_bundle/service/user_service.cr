@@ -1,4 +1,7 @@
-require "../autoload"
+require "../model/user"
+require "../exception/validation_exception"
+require "../repository/user_repository"
+require "../service/crypt_service"
 
 module App
   class UserService

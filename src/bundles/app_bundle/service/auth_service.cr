@@ -1,5 +1,8 @@
-require "../autoload"
 require "jwt"
+require "../model/user"
+require "../repository/user_repository"
+require "../service/crypt_service"
+require "../exception/validation_exception"
 
 module App
   class AuthService

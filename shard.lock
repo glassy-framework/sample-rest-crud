@@ -18,7 +18,7 @@ shards:
 
   glassy-http:
     git: https://github.com/glassy-framework/glassy-http.git
-    version: 0.1.0+git.commit.5f318a2492afd12bd0eaa931de703ad4219e66da
+    version: 0.1.0+git.commit.ce84f1fe128f0c41fececb676c637cf651e575b8
 
   glassy-kernel:
     git: https://github.com/glassy-framework/glassy-kernel.git
