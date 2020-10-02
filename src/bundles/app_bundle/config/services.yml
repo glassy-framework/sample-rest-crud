@@ -36,10 +36,10 @@ services:
   product_category_controller:
     class: App::ProductCategoryController
     kwargs:
-      serializer: '@product_category_serializer.as(App::Serializer(App::ProductCategory))'
+      serializer: '@product_category_serializer'
       service: '@product_category_service'
-      repository: '@product_category_repository.as(App::CrudRepository(App::ProductCategory))'
-      policy: '@product_category_policy.as(App::CrudPolicy(App::ProductCategory))'
+      repository: '@product_category_repository'
+      policy: '@product_category_policy'
       user_repository: '@user_repository'
     tag:
       - controller
@@ -64,7 +64,7 @@ services:
   product_category_service:
     class: App::ProductCategoryService
     kwargs:
-      repository: '@product_category_repository.as(App::CrudRepository(App::ProductCategory))'
+      repository: '@product_category_repository'
       validator: '@product_category_validator'
 
   # repositories

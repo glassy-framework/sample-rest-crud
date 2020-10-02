@@ -8,6 +8,15 @@ require "./crud_controller"
 
 module App
   class ProductCategoryController < CrudController(ProductCategory)
+    def initialize(
+      @serializer : ProductCategorySerializer,
+      @service : ProductCategoryService,
+      @repository : ProductCategoryRepository,
+      @policy : ProductCategoryPolicy,
+      @user_repository : UserRepository
+    )
+    end
+
     def path_prefix : String
       return "/product-categories"
     end

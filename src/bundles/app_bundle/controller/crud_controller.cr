@@ -8,20 +8,14 @@ require "../service/crud_service"
 
 module App
   abstract class CrudController(T) < Glassy::HTTP::Controller
-    @serializer : Serializer(T)
-    @service : CrudService(T)
-    @repository : CrudRepository(T)
-    @policy : CrudPolicy(T)
-    @user_repository : UserRepository
-
-    def initialize(
-      @serializer,
-      @service,
-      @repository,
-      @policy,
-      @user_repository
-    )
-    end
+    # def initialize(
+    #   @serializer : Serializer(T),
+    #   @service : CrudService(T),
+    #   @repository : CrudRepository(T),
+    #   @policy : CrudPolicy(T),
+    #   @user_repository : UserRepository
+    # )
+    # end
 
     def path_prefix : String
       raise "Must set a path prefix for crud controller"
@@ -38,13 +32,16 @@ module App
 
       user = get_user(ctx)
 
-      entity = @serializer.deserialize!(json_any)
+      entity = @serializer.deserialize!(json_any.not_nil!)
 
       unless @policy.can_create?(entity, user)
         raise Glassy::HTTP::Exceptions::UnauthorizedException.new("Permission denied")
       end
 
       @service.create(entity)
+
+      ctx.response.status_code = 201
+
       @serializer.serialize(entity)
     end
 

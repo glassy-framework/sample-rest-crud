@@ -3,11 +3,11 @@ require "../validator/validator"
 
 module App
   abstract class CrudService(T)
-    def initialize(
-      @repository : CrudRepository(T),
-      @validator : Validator(T)
-    )
-    end
+    # def initialize(
+    #   @repository : CrudRepository(T),
+    #   @validator : Validator(T)
+    # )
+    # end
 
     def create(entity : T) : T
       @validator.validate!(entity)
