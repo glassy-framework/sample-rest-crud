@@ -12,6 +12,9 @@ module App
     property name : String
 
     @[ODM::Field]
+    property order : Int32?
+
+    @[ODM::Field]
     property old_id : Int32?
 
     @[ODM::Initialize]

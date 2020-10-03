@@ -7,5 +7,6 @@ module App
     identifier id
     type "product-categories"
     attribute name
+    attribute order
   end
 end
