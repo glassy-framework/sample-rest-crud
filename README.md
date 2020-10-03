@@ -1,16 +1,9 @@
-# Glassy Skeleton
+# Sample Rest Crud
 
-Optional Base source code for building an API with Glassy Framework, that example include a user creation, show and authentication with JWT.
-
-## Installation
-
-```bash
-git clone --depth=1 --branch=master git@github.com:glassy-framework/glassy-skeleton.git mynewproject
-rm -rf ./mynewproject/.git
-```
+[![CircleCI](https://circleci.com/gh/glassy-framework/glassy-skeleton.svg?style=svg)](https://circleci.com/gh/glassy-framework/glassy-skeleton)
 
 ## Usage
-
+Download/Clone the repository, then
 ```
 cp .env.example .env
 docker-compose -f spec/docker-compose.yml up
