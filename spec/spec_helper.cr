@@ -12,8 +12,8 @@ class SpecContainer
   @@kernel = AppKernel.new
 
   http_kernel = @@kernel.container.http_kernel
-  http_kernel.register_controllers(kernel.container.controller_list)
-  http_kernel.register_middlewares(kernel.container.route_middleware_list)
+  http_kernel.register_controllers(kernel.container.http_controller_builder_list)
+  http_kernel.register_middlewares(kernel.container.http_middleware_list)
   http_kernel.run
 
   Spec.before_each do
@@ -42,16 +42,16 @@ end
 
 def create_user : App::User
   user = App::User.new("My Name", "test@email.com")
-  SpecContainer.kernel.container.user_repository.save(user)
+  SpecContainer.kernel.container.app_user_repository.save(user)
   user
 end
 
 def create_access_token(user : App::User) : String
-  result = SpecContainer.kernel.container.auth_service.login_user(user)
+  result = SpecContainer.kernel.container.app_auth_service.login_user(user)
   result[:access_token]
 end
 
-def create_product_category() : App::ProductCategory
+def create_product_category : App::ProductCategory
   create_product_category do |model|
     # do nothing
   end
@@ -64,7 +64,7 @@ def create_product_category(&block : Proc(App::ProductCategory, Void)) : App::Pr
     block.call(model)
   end
 
-  SpecContainer.kernel.container.product_category_repository.save(model)
+  SpecContainer.kernel.container.app_product_category_repository.save(model)
 
   model
 end

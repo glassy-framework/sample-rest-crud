@@ -1,5 +1,5 @@
 services:
-  my_command:
+  app.my_command:
     class: App::MyCommand
     kwargs:
       input: '@console_input'
@@ -8,100 +8,112 @@ services:
       - command
 
   # framework extensions
-  http_error_handler:
+  http.error_handler:
    class: App::ErrorHandler
 
   # controllers
-  home_controller:
+  app.home_controller:
     class: App::HomeController
+    kwargs:
+      i18n: '@i18n.translator'
     tag:
-      - controller
+      - http.controller
 
-  oauth_controller:
+  app.oauth_controller:
     class: App::OAuthController
     kwargs:
-      auth_service: '@auth_service'
+      auth_service: '@app.auth_service'
     tag:
-      - controller
+      - http.controller
 
-  user_controller:
+  app.user_controller:
     class: App::UserController
     kwargs:
-      user_serializer: '@user_serializer'
-      user_service: '@user_service'
-      user_repository: '@user_repository'
+      user_serializer: '@app.user_serializer'
+      user_service: '@app.user_service'
+      user_repository: '@app.user_repository'
     tag:
-      - controller
+      - http.controller
 
-  product_category_controller:
+  app.product_category_controller:
     class: App::ProductCategoryController
     kwargs:
-      serializer: '@product_category_serializer'
-      service: '@product_category_service'
-      repository: '@product_category_repository'
-      policy: '@product_category_policy'
-      user_repository: '@user_repository'
+      serializer: '@app.product_category_serializer'
+      service: '@app.product_category_service'
+      repository: '@app.product_category_repository'
+      policy: '@app.product_category_policy'
+      user_repository: '@app.user_repository'
     tag:
-      - controller
+      - http.controller
 
   # services
-  user_service:
+  app.user_service:
     class: App::UserService
     kwargs:
-      user_repository: '@user_repository'
-      crypt_service: '@crypt_service'
+      user_repository: '@app.user_repository'
+      crypt_service: '@app.crypt_service'
+      i18n: '@i18n.translator'
 
-  auth_service:
+  app.auth_service:
     class: App::AuthService
     kwargs:
-      user_repository: '@user_repository'
-      crypt_service: '@crypt_service'
+      user_repository: '@app.user_repository'
+      crypt_service: '@app.crypt_service'
       app_secret: '%app_secret:String%'
+      i18n: '@i18n.translator'
 
-  crypt_service:
+  app.crypt_service:
     class: App::CryptService
 
-  product_category_service:
+  app.product_category_service:
     class: App::ProductCategoryService
     kwargs:
-      repository: '@product_category_repository'
-      validator: '@product_category_validator'
+      repository: '@app.product_category_repository'
+      validator: '@app.product_category_validator'
 
   # repositories
-  user_repository:
+  app.user_repository:
     class: App::UserRepository
     kwargs:
-      connection: '@db_connection'
+      connection: '@db.connection'
 
-  product_category_repository:
+  app.product_category_repository:
     class: App::ProductCategoryRepository
     kwargs:
-      connection: '@db_connection'
+      connection: '@db.connection'
 
   # serializers
-  user_serializer:
+  app.user_serializer:
     class: App::UserSerializer
 
-  product_category_serializer:
+  app.product_category_serializer:
     class: App::ProductCategorySerializer
 
   # validators
-  product_category_validator:
+  app.product_category_validator:
     class: App::ProductCategoryValidator
 
   # policies
-  product_category_policy:
+  app.product_category_policy:
     class: App::ProductCategoryPolicy
 
   # middlewares
-  content_type_middleware:
+  app.content_type_middleware:
     class: App::ContentTypeMiddleware
     tag:
-      - route_middleware
+      - http.middleware
 
-  auth_middleware:
+  app.accept_language_middleware:
+    class: App::AcceptLanguageMiddleware
+    tag:
+      - http.middleware
+    kwargs:
+      yaml_data: '@i18n.yaml_data'
+      i18n_builder: '@i18n.translator_builder'
+
+  app.auth_middleware:
     class: App::AuthMiddleware
     kwargs:
-      auth_service: '@auth_service'
+      auth_service: '@app.auth_service'
     tag:
-      - route_middleware
+      - http.middleware

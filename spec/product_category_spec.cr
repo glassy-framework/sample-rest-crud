@@ -169,14 +169,14 @@ describe App::UserController do
     headers = HTTP::Headers.new
     headers["Authorization"] = "Bearer #{access_token}"
 
-    find_model = SpecContainer.kernel.container.product_category_repository.find_by_id(model.id.not_nil!)
+    find_model = SpecContainer.kernel.container.app_product_category_repository.find_by_id(model.id.not_nil!)
     find_model.should_not be_nil
 
     delete "/product-categories/#{model.id.to_s}", headers
 
     response.status_code.should eq 204
 
-    find_model = SpecContainer.kernel.container.product_category_repository.find_by_id(model.id.not_nil!)
+    find_model = SpecContainer.kernel.container.app_product_category_repository.find_by_id(model.id.not_nil!)
     find_model.should be_nil
   end
 
