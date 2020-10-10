@@ -92,6 +92,8 @@ services:
   # validators
   app.product_category_validator:
     class: App::ProductCategoryValidator
+    kwargs:
+      i18n: '@i18n.translator'
 
   # policies
   app.product_category_policy:
