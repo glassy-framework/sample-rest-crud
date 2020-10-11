@@ -6,7 +6,7 @@
 Download/Clone the repository, then
 ```
 cp .env.example .env
-docker-compose -f spec/docker-compose.yml up
+docker-compose up
 ```
 
 You can start playing!
