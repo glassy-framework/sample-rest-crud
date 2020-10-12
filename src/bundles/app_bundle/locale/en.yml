@@ -8,6 +8,7 @@ en:
     messages:
       required: "%{attr} can't be empty"
       email_already_exists: 'Email already exists'
+      the_image_is_required: 'The image is required'
 
   errors:
     malformed_json: 'Malformed JSON'

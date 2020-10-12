@@ -1,6 +1,6 @@
 require "./spec_helper.cr"
 
-describe App::UserController do
+describe App::ProductCategoryController do
   it "create product category" do
     access_token = create_access_token(create_user)
 
@@ -15,12 +15,22 @@ describe App::UserController do
         },
       },
     }.to_json, headers
-
     response.status_code.should eq 201
-
     json_response = JSON.parse(response.body)
-
     json_response["data"]["attributes"]["name"].raw.should eq "My Category"
+    json_response["data"]["attributes"]["order"].raw.should eq 1
+
+    post_json "/product-categories", {
+      "data" => {
+        "type"       => "product-categories",
+        "attributes" => {
+          "name" => "Other Category",
+        },
+      },
+    }.to_json, headers
+    response.status_code.should eq 201
+    json_response = JSON.parse(response.body)
+    json_response["data"]["attributes"]["order"].raw.should eq 2
   end
 
   it "create product category (error auth)" do

@@ -2,6 +2,7 @@ require "spec-kemal"
 require "spec"
 require "dotenv"
 require "../src/app_kernel"
+require "./mocks/storage_service_mock"
 
 Dotenv.load "#{__DIR__}/../.env.test"
 
@@ -10,6 +11,8 @@ Kemal.config.port = 3030
 
 class SpecContainer
   @@kernel = AppKernel.new
+
+  @@kernel.container.app_storage_service = StorageServiceMock.new(@@kernel.container.app_s3_client, "")
 
   http_kernel = @@kernel.container.http_kernel
   http_kernel.register_controllers(kernel.container.http_controller_builder_list)
@@ -52,7 +55,7 @@ def create_access_token(user : App::User) : String
 end
 
 def create_product_category : App::ProductCategory
-  create_product_category do |model|
+  create_product_category do |entity|
     # do nothing
   end
 end
@@ -65,6 +68,24 @@ def create_product_category(&block : Proc(App::ProductCategory, Void)) : App::Pr
   end
 
   SpecContainer.kernel.container.app_product_category_repository.save(model)
+
+  model
+end
+
+def create_product : App::Product
+  create_product do |entity|
+    # do nothing
+  end
+end
+
+def create_product(&block : Proc(App::Product, Void)) : App::Product
+  model = App::Product.new("Test Product")
+
+  if block
+    block.call(model)
+  end
+
+  SpecContainer.kernel.container.app_product_repository.save(model)
 
   model
 end

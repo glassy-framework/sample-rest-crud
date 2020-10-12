@@ -7,7 +7,8 @@ pt-BR:
 
     messages:
       required: "%{attr} não pode estar vazio"
-      email_already_exists: 'Email already exists'
+      email_already_exists: 'Email já existe'
+      the_image_is_required: 'A imagem é obrigatória'
 
   errors:
     malformed_json: "JSON malformado"

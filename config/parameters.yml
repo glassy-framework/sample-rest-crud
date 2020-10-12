@@ -3,3 +3,9 @@ parameters:
   db:
     server: '%env(DB_SERVER)%'
     default_database: '%env(DB_DATABASE)%'
+  storage:
+    default_bucket: '%env(STORAGE_DEFAULT_BUCKET)%'
+    s3_region: '%env(STORAGE_REGION)%'
+    s3_access_key: '%env(STORAGE_ACCESS_KEY)%'
+    s3_secret_key: '%env(STORAGE_SECRET_KEY)%'
+    s3_endpoint: '%env(STORAGE_ENDPOINT)%'

@@ -1,5 +1,6 @@
+require "glassy-i18n"
 require "../model/product_category"
-require "../policy/product_category_policy"
+require "../policy/default_policy"
 require "../serializer/product_category_serializer"
 require "../repository/product_category_repository"
 require "../service/product_category_service"
@@ -12,13 +13,18 @@ module App
       @serializer : ProductCategorySerializer,
       @service : ProductCategoryService,
       @repository : ProductCategoryRepository,
-      @policy : ProductCategoryPolicy,
-      @user_repository : UserRepository
+      @policy : DefaultPolicy(ProductCategory),
+      @user_repository : UserRepository,
+      @i18n : Glassy::I18n::Translator
     )
     end
 
     def path_prefix : String
       return "/product-categories"
+    end
+
+    def id_path : String
+      "category"
     end
   end
 end

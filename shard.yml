@@ -35,6 +35,9 @@ dependencies:
   dotenv:
     github: gdotdesign/cr-dotenv
 
+  awscr-s3:
+    github: taylorfinnell/awscr-s3
+
 development_dependencies:
   spec-kemal:
     github: kemalcr/spec-kemal

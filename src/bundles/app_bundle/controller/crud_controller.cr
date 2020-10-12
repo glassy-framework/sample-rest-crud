@@ -14,6 +14,7 @@ module App
     #   @repository : CrudRepository(T),
     #   @policy : CrudPolicy(T),
     #   @user_repository : UserRepository
+    #   @i18n : Glassy::I18n::Translator
     # )
     # end
 
@@ -21,45 +22,73 @@ module App
       raise "Must set a path prefix for crud controller"
     end
 
+    abstract def id_path : String
+
     @[Route("GET", "/", middlewares: ["auth"])]
     @[Context(arg: "ctx")]
     def index(ctx : HTTP::Server::Context) : String
-      entities = @repository.find_by({} of String => String)
+      user = get_user(ctx)
+      entities = @repository.find_by(query_scope(ctx, user))
 
       @serializer.serialize(entities)
+    end
+
+    def query_scope(ctx : HTTP::Server::Context, user : App::User) : Hash
+      {} of String => String
     end
 
     @[Route("POST", "/", middlewares: ["auth"])]
     @[Context(arg: "ctx")]
     def create(ctx : HTTP::Server::Context) : String
-      json_any = ctx.params.json_any
+      json_body = get_json_body(ctx)
 
-      if json_any.nil?
+      if json_body.nil?
         raise Glassy::HTTP::Exceptions::BadRequestException.new("Invalid json body")
       end
 
       user = get_user(ctx)
 
-      entity = @serializer.deserialize!(json_any.not_nil!)
+      entity = @serializer.deserialize!(json_body.not_nil!)
+      after_deserialize(ctx, entity)
 
       unless @policy.can_create?(entity, user)
         raise Glassy::HTTP::Exceptions::UnauthorizedException.new("Permission denied")
       end
 
-      @service.create(entity)
+      service_create(entity, ctx)
 
       ctx.response.status_code = 201
 
       @serializer.serialize(entity)
     end
 
-    @[Route("GET", "/:id", middlewares: ["auth"])]
+    def service_create(entity : T, ctx : HTTP::Server::Context)
+      @service.create(entity)
+    end
+
+    def after_deserialize(ctx : HTTP::Server::Context, entity : T) : Void
+      # overwrite
+    end
+
+    def get_json_body(ctx)
+      if ctx.params.body && ctx.params.body["json"]?
+        json_any = JSON.parse(ctx.params.body["json"].not_nil!)
+      else
+        json_any = ctx.params.json_any
+      end
+
+      json_any
+    end
+
+    @[Route("GET", "/:" + id_path, middlewares: ["auth"])]
     @[Context(arg: "ctx")]
     def show(ctx : HTTP::Server::Context) : String
-      id = ctx.params.url["id"]
+      id = ctx.params.url[id_path]
       user = get_user(ctx)
 
-      entity = @repository.find_by_id(id)
+      entity = @repository.find_one_by(query_scope(ctx, user).merge({
+        "_id" => BSON::ObjectId.new(id),
+      }))
 
       if entity.nil?
         raise Glassy::HTTP::Exceptions::NotFoundException.new("Resource not found")
@@ -72,13 +101,15 @@ module App
       @serializer.serialize(entity)
     end
 
-    @[Route("PATCH", "/:id", middlewares: ["auth"])]
+    @[Route("PATCH", "/:" + id_path, middlewares: ["auth"])]
     @[Context(arg: "ctx")]
     def update(ctx : HTTP::Server::Context) : String
-      id = ctx.params.url["id"]
+      id = ctx.params.url[id_path]
       user = get_user(ctx)
 
-      old_entity = @repository.find_by_id(id)
+      old_entity = @repository.find_one_by(query_scope(ctx, user).merge({
+        "_id" => BSON::ObjectId.new(id),
+      }))
 
       if old_entity.nil?
         raise Glassy::HTTP::Exceptions::NotFoundException.new("Resource not found")
@@ -88,28 +119,35 @@ module App
         raise Glassy::HTTP::Exceptions::UnauthorizedException.new("Permission denied")
       end
 
-      json_any = ctx.params.json_any
+      json_body = get_json_body(ctx)
 
-      if json_any.nil?
+      if json_body.nil?
         raise Glassy::HTTP::Exceptions::BadRequestException.new("Invalid json body")
       end
 
-      entity = @serializer.deserialize!(json_any.not_nil!, old_entity)
+      entity = @serializer.deserialize!(json_body.not_nil!, old_entity)
+      after_deserialize(ctx, entity)
 
-      @service.update(entity)
+      service_update(entity, ctx)
 
       ctx.response.status_code = 200
 
       @serializer.serialize(entity)
     end
 
-    @[Route("DELETE", "/:id", middlewares: ["auth"])]
+    def service_update(entity : T, ctx : HTTP::Server::Context)
+      @service.update(entity)
+    end
+
+    @[Route("DELETE", "/:" + id_path, middlewares: ["auth"])]
     @[Context(arg: "ctx")]
     def remove(ctx : HTTP::Server::Context) : String
-      id = ctx.params.url["id"]
+      id = ctx.params.url[id_path]
       user = get_user(ctx)
 
-      entity = @repository.find_by_id(id)
+      entity = @repository.find_one_by(query_scope(ctx, user).merge({
+        "_id" => BSON::ObjectId.new(id),
+      }))
 
       if entity.nil?
         raise Glassy::HTTP::Exceptions::NotFoundException.new("Resource not found")
@@ -119,11 +157,15 @@ module App
         raise Glassy::HTTP::Exceptions::UnauthorizedException.new("Permission denied")
       end
 
-      @service.remove(entity.id.to_s)
+      service_remove(entity)
 
       ctx.response.status_code = 204
 
       ""
+    end
+
+    def service_remove(entity : T)
+      @service.remove(entity.id.to_s)
     end
 
     def get_user(ctx : HTTP::Server::Context) : User

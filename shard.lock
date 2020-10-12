@@ -1,5 +1,13 @@
 version: 2.0
 shards:
+  awscr-s3:
+    git: https://github.com/taylorfinnell/awscr-s3.git
+    version: 0.8.0
+
+  awscr-signer:
+    git: https://github.com/taylorfinnell/awscr-signer.git
+    version: 0.7.0
+
   bindata:
     git: https://github.com/spider-gazelle/bindata.git
     version: 1.7.0
@@ -18,7 +26,7 @@ shards:
 
   glassy-http:
     git: https://github.com/glassy-framework/glassy-http.git
-    version: 0.1.0+git.commit.da7551c3d6ac9f6520a1667de722b753013f328f
+    version: 0.1.0+git.commit.d3f0b7de11dacd0519f9ee071ae62ffe1dd6b11c
 
   glassy-i18n:
     git: https://github.com/glassy-framework/glassy-i18n.git
@@ -26,11 +34,11 @@ shards:
 
   glassy-kernel:
     git: https://github.com/glassy-framework/glassy-kernel.git
-    version: 0.1.1+git.commit.9d62162c4b354bfb0ba6d0f836b0e97ad250dd08
+    version: 0.1.1+git.commit.6721dd77cc3681df01dcad964a89f560ae5d8c34
 
   glassy-mongo-odm:
     git: https://github.com/glassy-framework/glassy-mongo-odm.git
-    version: 0.1.0+git.commit.f26a67ae8830e1a7925bbe8ec4a46482f6bc3ea2
+    version: 0.1.0+git.commit.dd9683487f2e9914c7918726a997b710f417a9ce
 
   i18n:
     git: https://github.com/vladfaust/i18n.cr.git

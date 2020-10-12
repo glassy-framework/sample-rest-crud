@@ -43,6 +43,19 @@ services:
       repository: '@app.product_category_repository'
       policy: '@app.product_category_policy'
       user_repository: '@app.user_repository'
+      i18n: '@i18n.translator'
+    tag:
+      - http.controller
+
+  app.product_controller:
+    class: App::ProductController
+    kwargs:
+      serializer: '@app.product_serializer'
+      service: '@app.product_service'
+      repository: '@app.product_repository'
+      policy: '@app.product_policy'
+      user_repository: '@app.user_repository'
+      i18n: '@i18n.translator'
     tag:
       - http.controller
 
@@ -71,6 +84,30 @@ services:
       repository: '@app.product_category_repository'
       validator: '@app.product_category_validator'
 
+  app.product_service:
+    class: App::ProductService
+    kwargs:
+      repository: '@app.product_repository'
+      validator: '@app.product_validator'
+      storage_service: '@app.storage_service'
+
+  app.storage_service:
+    class: App::StorageService
+    kwargs:
+      client: '@app.s3_client'
+      default_bucket: '%storage.default_bucket:String%'
+
+  # third-party dependencies
+  app.s3_client:
+    class: Awscr::S3::Client
+    singleton: true
+    kwargs:
+      region: '%storage.s3_region:String%'
+      aws_access_key: '%storage.s3_access_key:String%'
+      aws_secret_key: '%storage.s3_secret_key:String%'
+      endpoint: '%storage.s3_endpoint:String%'
+
+
   # repositories
   app.user_repository:
     class: App::UserRepository
@@ -82,6 +119,11 @@ services:
     kwargs:
       connection: '@db.connection'
 
+  app.product_repository:
+    class: App::ProductRepository
+    kwargs:
+      connection: '@db.connection'
+
   # serializers
   app.user_serializer:
     class: App::UserSerializer
@@ -89,15 +131,26 @@ services:
   app.product_category_serializer:
     class: App::ProductCategorySerializer
 
+  app.product_serializer:
+    class: App::ProductSerializer
+
   # validators
   app.product_category_validator:
     class: App::ProductCategoryValidator
     kwargs:
       i18n: '@i18n.translator'
 
+  app.product_validator:
+    class: App::ProductValidator
+    kwargs:
+      i18n: '@i18n.translator'
+
   # policies
   app.product_category_policy:
-    class: App::ProductCategoryPolicy
+    class: App::DefaultPolicy(App::ProductCategory)
+
+  app.product_policy:
+    class: App::DefaultPolicy(App::Product)
 
   # middlewares
   app.content_type_middleware:

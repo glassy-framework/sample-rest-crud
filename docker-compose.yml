@@ -16,5 +16,17 @@ services:
     volumes:
       - data_mongo:/data/db
 
+  minio:
+    image: minio/minio
+    ports:
+      - 3001:9000
+    command: ['minio', 'server', '/data']
+    volumes:
+      - data_minio:/data
+    environment:
+      - MINIO_ACCESS_KEY=AKIAIOSFODNN7SPA
+      - MINIO_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYSPA
+
 volumes:
   data_mongo:
+  data_minio:

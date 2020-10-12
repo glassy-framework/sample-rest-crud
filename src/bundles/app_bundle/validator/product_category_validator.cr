@@ -9,7 +9,7 @@ module App
     end
 
     def validate!(entity : ProductCategory) : Void
-      if entity.name.nil? || entity.name == ""
+      if entity.name.empty?
         raise ValidationException.new(@i18n.t("validation.messages.required", {
           "attr" => @i18n.t("validation.attributes.name")
         }))
