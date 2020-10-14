@@ -77,6 +77,8 @@ services:
 
   app.crypt_service:
     class: App::CryptService
+    kwargs:
+      app_secret: '%app_secret:String%'
 
   app.product_category_service:
     class: App::ProductCategoryService
