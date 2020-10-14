@@ -12,7 +12,7 @@ Kemal.config.port = 3030
 class SpecContainer
   @@kernel = AppKernel.new
 
-  @@kernel.container.app_storage_service = StorageServiceMock.new(@@kernel.container.app_s3_client, "")
+  @@kernel.container.app_storage_service = StorageServiceMock.new(@@kernel.container.app_s3_client, "", "http://localhost/%{bucket}/%{path}")
 
   http_kernel = @@kernel.container.http_kernel
   http_kernel.register_controllers(kernel.container.http_controller_builder_list)

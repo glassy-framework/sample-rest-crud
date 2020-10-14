@@ -5,6 +5,7 @@ parameters:
     default_database: '%env(DB_DATABASE)%'
   storage:
     default_bucket: '%env(STORAGE_DEFAULT_BUCKET)%'
+    public_url_pattern: '%env(STORAGE_PUBLIC_URL_PATTERN)%'
     s3_region: '%env(STORAGE_REGION)%'
     s3_access_key: '%env(STORAGE_ACCESS_KEY)%'
     s3_secret_key: '%env(STORAGE_SECRET_KEY)%'

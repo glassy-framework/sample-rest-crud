@@ -1,9 +1,10 @@
 require "awscr-s3"
 require "random"
+require "mime"
 
 module App
   class StorageService
-    def initialize(@client : Awscr::S3::Client, @default_bucket : String)
+    def initialize(@client : Awscr::S3::Client, @default_bucket : String, @public_url_pattern : String)
     end
 
     def generate_random_name(ext : String)
@@ -13,9 +14,22 @@ module App
     def upload_file(file : File, target_name : String, bucket : String? = nil) : Void
       bucket ||= @default_bucket
 
-      uploader = Awscr::S3::FileUploader.new(@client)
+      headers = {
+        "Content-Type" => MIME.from_filename(target_name),
+      }
 
-      uploader.upload(bucket, target_name, file)
+      uploader = Awscr::S3::FileUploader.new(@client, Awscr::S3::FileUploader::Options.new(with_content_types: false))
+
+      uploader.upload(bucket, target_name, file, headers)
+    end
+
+    def public_url(path : String, bucket : String? = nil) : String
+      bucket ||= @default_bucket
+
+      @public_url_pattern % {
+        "path"   => path,
+        "bucket" => bucket,
+      }
     end
 
     def bucket_exists?(bucket : String)

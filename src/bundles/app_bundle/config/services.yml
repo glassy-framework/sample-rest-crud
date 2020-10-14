@@ -96,6 +96,7 @@ services:
     kwargs:
       client: '@app.s3_client'
       default_bucket: '%storage.default_bucket:String%'
+      public_url_pattern: '%storage.public_url_pattern:String%'
 
   # third-party dependencies
   app.s3_client:
@@ -133,6 +134,13 @@ services:
 
   app.product_serializer:
     class: App::ProductSerializer
+    kwargs:
+      public_url_serializer: '@app.public_url_serializer'
+
+  app.public_url_serializer:
+    class: App::PublicUrlSerializer
+    kwargs:
+      storage_service: '@app.storage_service'
 
   # validators
   app.product_category_validator:
